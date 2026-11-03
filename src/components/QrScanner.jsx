@@ -70,7 +70,7 @@ export function QrScanner({ onScan, busy }) {
           onChange={(e) => setManual(e.target.value)}
           placeholder="Scan with the handheld scanner or paste the QR code text"
           aria-label="QR code value"
-          className="flex-1 px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="min-h-11 flex-1 rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           disabled={busy}
           autoComplete="off"
         />

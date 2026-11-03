@@ -2,7 +2,7 @@ import { cn } from '../../utils/cn'
 
 export function Card({ children, className, padding = true }) {
   return (
-    <div className={cn('bg-white rounded-xl border border-slate-200 shadow-sm', padding && 'p-5', className)}>
+    <div className={cn('rounded-2xl border border-slate-200/80 bg-white shadow-sm', padding && 'p-5 sm:p-6', className)}>
       {children}
     </div>
   )
@@ -10,8 +10,8 @@ export function Card({ children, className, padding = true }) {
 
 export function CardTitle({ children, action }) {
   return (
-    <div className="flex items-center justify-between mb-4">
-      <h3 className="text-sm font-semibold text-slate-900">{children}</h3>
+    <div className="mb-4 flex items-center justify-between gap-3">
+      <h3 className="text-base font-semibold tracking-tight text-slate-900">{children}</h3>
       {action}
     </div>
   )

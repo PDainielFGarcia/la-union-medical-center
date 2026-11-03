@@ -36,16 +36,16 @@ export function AppLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="flex min-h-screen bg-[#f3f5f9]">
       <Sidebar user={user} open={open} onClose={() => setOpen(false)} onLogout={handleLogout} />
       <div className="flex-1 min-w-0 flex flex-col">
         <Header user={user} onMenu={() => setOpen(true)} />
         {accessNotice ? (
-          <div className="mx-4 lg:mx-6 mt-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="alert">
+          <div className="mx-4 mt-3 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 lg:mx-8" role="alert">
             {accessNotice}
           </div>
         ) : null}
-        <main className="flex-1 p-4 lg:p-6 overflow-x-hidden">
+        <main className="flex-1 overflow-x-hidden p-4 sm:p-6 lg:p-8">
           <Outlet />
         </main>
       </div>

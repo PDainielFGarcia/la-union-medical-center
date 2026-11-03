@@ -9,7 +9,7 @@ export function Table({ columns, rows = [], rowKey = 'id', empty = 'No records f
     <div className="overflow-x-auto">
       <table className="min-w-full text-sm">
         <thead>
-          <tr className="text-left text-xs font-semibold tracking-wider text-slate-500 border-b border-slate-200">
+          <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold tracking-wide text-slate-500 uppercase">
             {columns.map((column) => (
               <th key={column.key} className="px-3 py-3 whitespace-nowrap">
                 {column.label}
@@ -19,9 +19,9 @@ export function Table({ columns, rows = [], rowKey = 'id', empty = 'No records f
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr key={row[rowKey]} className="border-b border-slate-100 last:border-0 hover:bg-slate-50">
+            <tr key={row[rowKey]} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/80">
               {columns.map((column) => (
-                <td key={column.key} className="px-3 py-3 align-middle text-slate-700">
+                <td key={column.key} className="px-3 py-3.5 align-middle text-slate-700">
                   {column.render ? column.render(row) : row[column.key] || '—'}
                 </td>
               ))}

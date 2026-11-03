@@ -68,18 +68,18 @@ export function Header({ user, onMenu }) {
   }
 
   return (
-    <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 lg:px-6 sticky top-0 z-20">
-      <div className="flex items-center gap-3">
-        <button type="button" className="lg:hidden text-slate-600" onClick={onMenu} aria-label="Open menu">
-          <Menu className="w-6 h-6" />
+    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 lg:px-8">
+      <div className="flex min-w-0 items-center gap-3">
+        <button type="button" className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-700 hover:bg-slate-100 lg:hidden" onClick={onMenu} aria-label="Open menu">
+          <Menu className="h-6 w-6" />
         </button>
-        <div className="hidden md:block">
-          <p className="text-sm text-slate-500">Welcome back,</p>
-          <p className="text-sm font-semibold text-slate-900">{user?.name}</p>
-        </div>
+        <p className="truncate text-sm text-slate-600">
+          <span className="hidden sm:inline">Welcome back, </span>
+          <span className="font-semibold text-slate-900">{user?.name}</span>
+        </p>
       </div>
       <div className="relative">
-        <button type="button" className="relative p-2 rounded-lg hover:bg-slate-100" aria-label="Notifications" onClick={toggleNotes}>
+        <button type="button" className="relative flex h-11 w-11 items-center justify-center rounded-xl hover:bg-slate-100" aria-label="Notifications" onClick={toggleNotes}>
           <Bell className="w-5 h-5 text-slate-600" />
           {unread ? (
             <span className="absolute top-1 right-1 min-w-4 h-4 px-0.5 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">
@@ -88,10 +88,10 @@ export function Header({ user, onMenu }) {
           ) : null}
         </button>
         {openNotes ? (
-          <div className="absolute right-0 mt-2 w-80 max-h-96 overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-xl p-3 z-30">
+          <div className="absolute right-0 z-30 mt-2 max-h-96 w-80 overflow-y-auto rounded-2xl border border-slate-200 bg-white p-3 shadow-xl">
             <div className="flex items-center justify-between mb-2 sticky top-0 bg-white pb-1">
               <p className="text-sm font-semibold">Notifications</p>
-              <button type="button" className="text-xs text-blue-600" onClick={markAllRead}>Mark all read</button>
+              <button type="button" className="min-h-8 rounded-lg px-2 text-xs font-medium text-blue-700 hover:bg-blue-50" onClick={markAllRead}>Mark all read</button>
             </div>
             {notes.length ? null : <p className="text-xs text-slate-400 py-2">No notifications yet</p>}
             {notes.map((note) => (

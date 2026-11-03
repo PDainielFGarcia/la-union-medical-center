@@ -52,7 +52,7 @@ export function DashboardPage() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-6">
         <Card className="xl:col-span-2">
           <CardTitle>Bed availability by ward</CardTitle>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {data.ward_census.map((ward) => {
               const pct = ward.total ? Math.round((ward.occupied / ward.total) * 100) : 0
               return (
@@ -61,7 +61,7 @@ export function DashboardPage() {
                     <span className="text-slate-700">{ward.ward}</span>
                     <span className="text-slate-500"><strong className="text-emerald-600">{ward.available}</strong> free · {ward.occupied}/{ward.total} occupied</span>
                   </div>
-                  <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                  <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
                     <div className="h-full rounded-full bg-blue-600" style={{ width: `${pct}%` }} />
                   </div>
                 </div>

@@ -43,7 +43,7 @@ const statusMap = {
 export function Badge({ children, tone, status, className }) {
   const resolved = tone || statusMap[status] || 'neutral'
   return (
-    <span className={cn('inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium', tones[resolved], className)}>
+    <span className={cn('inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold', tones[resolved], className)}>
       {children || titleCaseStatus(status)}
     </span>
   )
