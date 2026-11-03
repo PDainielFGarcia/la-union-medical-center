@@ -1,6 +1,8 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import { GuestRoute, ProtectedRoute } from '../auth/ProtectedRoute'
 import { AppLayout } from '../layouts/AppLayout'
+import { HomeGate } from '../pages/HomePage'
+import { HospitalInfoPage } from '../pages/HospitalInfoPage'
 import { LoginPage } from '../pages/LoginPage'
 import { DashboardPage } from '../pages/DashboardPage'
 import { TriagePage } from '../pages/TriagePage'
@@ -17,10 +19,11 @@ import { AuditLogsPage, BackupsPage, NotFoundPage, ParkingAreasPage, ReportsPage
 export function AppRoutes() {
   return (
     <Routes>
+      <Route path="/" element={<HomeGate />} />
+      <Route path="/hospital-information" element={<HospitalInfoPage />} />
       <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
       <Route path="/public-display" element={<ProtectedRoute><PublicDisplayPage /></ProtectedRoute>} />
       <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/triage" element={<TriagePage />} />

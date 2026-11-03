@@ -1,29 +1,19 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock, User } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { brand } from '../assets/brand'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/FormFields'
 import { useAuth } from '../auth/AuthContext'
 import { roleHome } from '../utils/constants'
 import { getErrorMessage } from '../utils/errors'
 
-const LOGO_SRC = '/lumc-logo.png'
-
-const FEATURES = [
-  'Visitor Management',
-  'Patient & Hospital Visits',
-  'Queue Management',
-  'Bed Management',
-  'Parking',
-  'QR Gate Scanning',
-  'Daily Reports & Backups',
-  'Audit & Compliance',
-]
-
 export function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
   const [loginName, setLoginName] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
@@ -46,91 +36,95 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-700 to-blue-900 text-white p-12 flex-col justify-between relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
-        <div className="relative z-10">
-          <div className="flex items-center gap-4">
-            <img
-              src={LOGO_SRC}
-              alt="La Union Medical Center logo"
-              className="w-16 h-16 rounded-full object-cover shadow-lg ring-2 ring-white/40 bg-white"
-            />
-            <div>
-              <h1 className="text-2xl font-bold">LUMC</h1>
-              <p className="text-blue-200 text-sm">La Union Medical Center</p>
-            </div>
-          </div>
-        </div>
-        <div className="relative z-10 space-y-6">
-          <h2 className="text-4xl font-bold leading-tight">Complete Hospital Operations, One Platform.</h2>
-          <p className="text-blue-100 text-lg">
-            Visitor approvals and QR gate passes, hospital visit queues, ward and bed availability, admissions, and parking — all in one role-based system.
-          </p>
-          <div className="grid grid-cols-2 gap-4 pt-4">
-            {FEATURES.map((feature) => (
-              <div key={feature} className="flex items-center gap-2 text-blue-100">
-                <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                </svg>
-                <span className="text-sm">{feature}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-        <p className="text-blue-300 text-xs relative z-10">© 2026 La Union Medical Center.</p>
-      </div>
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-[linear-gradient(160deg,#2f6bff_0%,#1d4ed8_46%,#1e3a8a_100%)] text-white">
+      <img
+        src={brand.provinceSeal}
+        alt=""
+        className="pointer-events-none absolute -left-16 top-1/2 hidden w-[28rem] -translate-y-1/2 opacity-20 lg:block"
+      />
+      <img
+        src={brand.lumcSeal}
+        alt=""
+        className="pointer-events-none absolute -right-10 top-1/2 hidden w-[30rem] -translate-y-1/2 opacity-20 lg:block"
+      />
 
-      <div className="flex-1 flex items-center justify-center p-6 bg-slate-50">
-        <div className="w-full max-w-md">
-          <div className="lg:hidden flex flex-col items-center gap-3 mb-8">
-            <img
-              src={LOGO_SRC}
-              alt="La Union Medical Center logo"
-              className="w-20 h-20 rounded-full object-cover shadow-md bg-white"
-            />
-            <div className="text-center">
-              <h1 className="text-2xl font-bold text-slate-900">LUMC</h1>
-              <p className="text-slate-500 text-sm">La Union Medical Center</p>
-            </div>
+      <header className="relative z-10 flex items-center justify-between gap-3 px-4 py-4 sm:px-8">
+        <div className="flex min-w-0 items-center gap-3">
+          <img src={brand.lumcSeal} alt="La Union Medical Center seal" className="h-12 w-12 shrink-0 rounded-full bg-white object-contain" />
+          <div className="min-w-0">
+            <p className="truncate text-sm font-bold tracking-wide sm:text-base">LA UNION MEDICAL CENTER</p>
+            <p className="truncate text-[10px] font-medium tracking-[0.12em] text-blue-100 sm:text-[11px]">VISITOR/PATIENT MANAGEMENT SYSTEM</p>
           </div>
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8">
-            <div className="hidden lg:flex justify-center mb-6">
-              <img
-                src={LOGO_SRC}
-                alt="La Union Medical Center logo"
-                className="w-24 h-24 rounded-full object-cover shadow-md bg-white"
-              />
-            </div>
-            <h2 className="text-2xl font-bold text-slate-900 text-center lg:text-left">Sign In</h2>
-            <p className="text-slate-500 text-sm mt-1 text-center lg:text-left">Enter your login and password</p>
-            <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-              <Input
-                label="Login"
-                name="login"
-                autoComplete="username"
-                placeholder="Your login"
-                value={loginName}
-                onChange={(event) => setLoginName(event.target.value)}
-              />
-              <Input
-                label="Password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-              />
-              {error ? <p className="text-sm text-red-600">{error}</p> : null}
-              <Button type="submit" className="w-full" disabled={submitting}>
-                {submitting ? 'Signing in…' : 'Sign In'}
-              </Button>
-            </form>
-          </div>
-          <p className="lg:hidden text-center text-slate-400 text-xs mt-6">© 2026 La Union Medical Center.</p>
+          <img src={brand.provinceSeal} alt="" className="hidden h-10 w-10 object-contain sm:block" />
+          <img src={brand.bagongPilipinas} alt="Bagong Pilipinas" className="hidden h-10 w-10 object-contain md:block" />
         </div>
-      </div>
+        <Link
+          to="/"
+          className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-3 text-sm font-medium hover:bg-white/20 sm:px-4"
+        >
+          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+          <span className="hidden sm:inline">Back to Homepage</span>
+          <span className="sm:hidden">Home</span>
+        </Link>
+      </header>
+
+      <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 pb-8">
+        <img src={brand.lumcSeal} alt="" className="mb-4 h-24 w-24 object-contain drop-shadow-lg" />
+        <form
+          className="w-full max-w-md rounded-2xl border border-white/20 bg-[#1e4fbe]/70 p-6 shadow-2xl backdrop-blur-md sm:p-8"
+          onSubmit={handleSubmit}
+        >
+          <h1 className="text-2xl font-bold text-white">Sign In</h1>
+          <p className="mt-1 text-sm text-blue-100">Enter your login and password</p>
+          <div className="mt-6 space-y-4">
+            <Input
+              variant="glass"
+              label="Login"
+              name="login"
+              autoComplete="username"
+              placeholder="Your login"
+              value={loginName}
+              onChange={(event) => setLoginName(event.target.value)}
+              startAdornment={<User className="h-4 w-4" aria-hidden="true" />}
+            />
+            <Input
+              variant="glass"
+              label="Password"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="current-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              startAdornment={<Lock className="h-4 w-4" aria-hidden="true" />}
+              endAdornment={(
+                <button
+                  type="button"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-white/80 hover:bg-white/10"
+                  onClick={() => setShowPassword((current) => !current)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              )}
+            />
+            {error ? (
+              <p className="rounded-lg bg-white px-3 py-2 text-sm text-red-700" role="alert">{error}</p>
+            ) : null}
+            <Button
+              type="submit"
+              className="w-full min-h-12 !bg-[#dc2626] text-base tracking-wide uppercase hover:!bg-[#b91c1c]"
+              disabled={submitting}
+            >
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              {submitting ? 'Signing in…' : 'Sign In'}
+            </Button>
+          </div>
+        </form>
+      </main>
+
+      <p className="relative z-10 px-4 pb-5 text-center text-xs tracking-wide text-blue-100">
+        © 2026 LA UNION MEDICAL CENTER — AGOO, LA UNION — AGKAYSA!
+      </p>
     </div>
   )
 }
