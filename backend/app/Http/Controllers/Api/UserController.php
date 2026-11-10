@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Clinic;
 use App\Models\Doctor;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use App\Support\ApiResponse;
 use App\Support\PasswordRules;
 use Illuminate\Http\JsonResponse;
@@ -15,6 +16,8 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
+    public function __construct(private ActivityLogger $log) {}
+
     public function index(): JsonResponse
     {
         $users = User::query()->with('department')->orderBy('last_name')->orderBy('first_name')->get()
@@ -49,6 +52,7 @@ class UserController extends Controller
             $data['department_id'] = null;
         }
 
+        $customPassword = ! empty($data['password']);
         $user = new User([
             'login' => strtolower($data['login']),
             'contact_number' => $data['contact_number'] ?? null,
@@ -69,6 +73,21 @@ class UserController extends Controller
                 ->update(['secretary_user_id' => $user->id]);
         }
 
+        $details = 'Role: '.$user->role.($customPassword ? '; custom password set' : '; default password used');
+        if ($user->department_id) {
+            $details .= '; office #'.$user->department_id;
+        }
+        if ($data['role'] === 'doctor' && ! empty($data['clinic_id'])) {
+            $details .= '; clinic #'.$data['clinic_id'];
+        }
+
+        $this->log->audit(
+            $request->user(),
+            'User Created',
+            "{$user->name} ({$user->login})",
+            $details,
+        );
+
         return ApiResponse::data($user->load('department')->toApiArray(), 201);
     }
 
@@ -88,6 +107,11 @@ class UserController extends Controller
             'status' => ['sometimes', 'in:active,inactive'],
             'admin_password' => ['nullable', 'string'],
         ]);
+
+        $beforeLogin = $user->login;
+        $beforeRole = $user->role;
+        $beforeStatus = $user->status;
+        $beforeDepartment = $user->department_id;
 
         $changingLogin = isset($data['login']) && strtolower($data['login']) !== $user->login;
         $changingPassword = ! empty($data['password']);
@@ -129,9 +153,44 @@ class UserController extends Controller
         $user->save();
 
         $role = $user->role;
+        $clinicChanged = false;
         if ($role === 'doctor' && ! empty($data['clinic_id'])) {
             $this->ensureDoctorRecord($user, (int) $data['clinic_id'], $data['specialty'] ?? null);
+            $clinicChanged = true;
         }
+
+        $changes = [];
+        if ($changingLogin) {
+            $changes[] = "login {$beforeLogin} → {$user->login}";
+        }
+        if ($changingPassword) {
+            $changes[] = 'password reset';
+        }
+        if (isset($data['role']) && $data['role'] !== $beforeRole) {
+            $changes[] = "role {$beforeRole} → {$user->role}";
+        }
+        if (isset($data['status']) && $data['status'] !== $beforeStatus) {
+            $changes[] = "status {$beforeStatus} → {$user->status}";
+        }
+        if (array_key_exists('department_id', $data) && $user->department_id !== $beforeDepartment) {
+            $changes[] = 'office assignment updated';
+        }
+        if ($clinicChanged) {
+            $changes[] = 'clinic assignment updated';
+        }
+        if (isset($data['first_name']) || isset($data['last_name']) || array_key_exists('middle_name', $data) || isset($data['contact_number'])) {
+            $changes[] = 'profile fields updated';
+        }
+        if ($changes === []) {
+            $changes[] = 'user record saved';
+        }
+
+        $this->log->audit(
+            $request->user(),
+            'User Updated',
+            "{$user->name} ({$user->login})",
+            implode('; ', $changes),
+        );
 
         return ApiResponse::data($user->fresh('department')->toApiArray());
     }

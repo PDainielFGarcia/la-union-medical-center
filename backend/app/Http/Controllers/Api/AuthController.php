@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use App\Support\PasswordRules;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    public function __construct(private ActivityLogger $log) {}
+
     public function login(Request $request): JsonResponse
     {
         $credentials = $request->validate([
@@ -70,13 +73,32 @@ class AuthController extends Controller
             'password' => PasswordRules::optional(),
         ]);
 
+        $beforeLogin = $user->login;
+        $changingPassword = ! empty($data['password']);
+        $changingLogin = strtolower($data['login']) !== $user->login;
+
         $user->applyNormalizedNames($data['first_name'], $data['middle_name'] ?? null, $data['last_name']);
         $user->login = strtolower($data['login']);
         $user->contact_number = $data['contact_number'];
-        if (! empty($data['password'])) {
+        if ($changingPassword) {
             $user->password = $data['password'];
         }
         $user->save();
+
+        $changes = ['profile updated'];
+        if ($changingLogin) {
+            $changes[] = "login {$beforeLogin} → {$user->login}";
+        }
+        if ($changingPassword) {
+            $changes[] = 'password changed';
+        }
+
+        $this->log->audit(
+            $user,
+            'Profile Updated',
+            "{$user->name} ({$user->login})",
+            implode('; ', $changes),
+        );
 
         return response()->json($user->fresh('department')->toApiArray(includeLogin: true));
     }
